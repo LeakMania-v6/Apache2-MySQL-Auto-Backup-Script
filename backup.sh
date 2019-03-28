@@ -60,3 +60,5 @@ sleep $timeout
 ./backup.sh
 
 echo $files
+
+#SOURCE: https://github.com/LeakMania-v6/Apache2-MySQL-Auto-Backup-Script
