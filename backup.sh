@@ -41,12 +41,6 @@ do
 	files+=$str'.sql '
 done
 
-for str in "${databases[@]}"
-do
-	mysqldump --user=$db_user --password=$db_password --databases $str > $str.sql
-	files+=$str'.sql '
-done
-
 mkdir backups
 mv *.sql backups
 zip --password $backup_pw $backup_name -r backups
