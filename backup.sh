@@ -23,6 +23,9 @@ anonfile_token='token'
 #List all websites you want to backup here.
 #Exemple: sites=("site1" "site2")
 sites=("public_html")
+
+#List all databases you want to backup here.
+#Exemple: sites=("database1" "database1")
 databases=("main_database")
 
 #Folder where you store your website(s)
