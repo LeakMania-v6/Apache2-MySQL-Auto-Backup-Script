@@ -1,7 +1,7 @@
 #!/bin/bash
 
 date=`date '+[%Y_%m_%d]<->[%H-%M-%S]'`
-backup_name=database_backup_$date.zip
+mysql_backup_name=mysql_backup_$date.zip
 site_backup_name=site_backup_$date.zip
 
 #Timeout between every backups (in seconds).
@@ -46,14 +46,14 @@ done
 
 mkdir backups
 mv *.sql backups
-zip --password $backup_pw $backup_name -r backups
+zip --password $backup_pw $mysql_backup_name -r backups
 rm -rf backups
 
-curl -F "file=@$backup_name" https://anonfile.com/api/upload?token=$anonfile_token
+curl -F "file=@$mysql_backup_name" https://anonfile.com/api/upload?token=$anonfile_token
 curl -F "file=@$site_backup_name" https://anonfile.com/api/upload?token=$anonfile_token
 
 rm $site_backup_name
-rm $backup_name
+rm $mysql_backup_name
 
 sleep $timeout
 
