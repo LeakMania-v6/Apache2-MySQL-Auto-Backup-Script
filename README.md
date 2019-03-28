@@ -6,7 +6,7 @@ Requirements:
 ```
 apt-get install zip curl screen
 ```
-<br><br>
+<br>
 Launch this script with these commands:
 <br>
 ```
