@@ -25,15 +25,15 @@ anonfile_token='token'
 sites=("public_html")
 
 #List all databases you want to backup here.
-#Exemple: databases=("database1" "database1")
+#Exemple: databases=("database1" "database2")
 databases=("main_database")
 
 #Folder where you store your website(s)
-sites_path='/var/www'
+sites_path='/var/www/'
 sites_paths=''
 for str in "${sites_paths[@]}"
 do
-	sites_paths+=' '$sites_path'/'$str
+	sites_paths+=' '$sites_path$str
 done
 zip --password $backup_pw $site_backup_name -r$sites_paths
 
