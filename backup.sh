@@ -1,11 +1,15 @@
 #!/bin/bash
 
-date=`date '+[%Y_%m_%d]<->[%H-%M-%S]'`
+date=`date '+[%Y_%m_%d]-[%H-%M-%S]'`
 mysql_backup_name=mysql_backup_$date.zip
 site_backup_name=site_backup_$date.zip
 
+#If you don't want to use anonfile, you can change this URL
+#You must know what you doing.
+url="https://api.openload.cc/upload"
+
 #Timeout between every backups (in seconds).
-timeout=86400
+timeout=43200
 
 #Database login informations.
 db_user='username'
@@ -13,29 +17,21 @@ db_password='password'
 
 #Backup password.
 #It's recommended to use an very strong password here.
-backup_pw='very_strong_password'
+backup_pw=''
 
 #Here you need to put your anonfile token.
 #Get your anonfile token here: https://anonfile.com/docs/api
 #Only available for registered peoples.
-anonfile_token='token'
-
-#List all websites you want to backup here.
-#Exemple: sites=("site1" "site2")
-sites=("public_html")
+token=''
 
 #List all databases you want to backup here.
 #Exemple: databases=("database1" "database2")
-databases=("main_database")
+databases=("")
 
 #Folder where you store your website(s)
 sites_path='/var/www/'
-sites_paths=''
-for str in "${sites_paths[@]}"
-do
-	sites_paths+=' '$sites_path$str
-done
-zip --password $backup_pw $site_backup_name -r$sites_paths
+
+zip -9 --password $backup_pw $site_backup_name -r $sites_path
 
 files=''
 for str in "${databases[@]}"
@@ -44,16 +40,13 @@ do
 	files+=$str'.sql '
 done
 
-mkdir backups
-mv *.sql backups
-zip --password $backup_pw $mysql_backup_name -r backups
-rm -rf backups
+mkdir backups; mv *.sql backups; zip -9 --password $backup_pw $mysql_backup_name -r backups; rm -rf backups
 
-curl -F "file=@$mysql_backup_name" https://anonfile.com/api/upload?token=$anonfile_token
-curl -F "file=@$site_backup_name" https://anonfile.com/api/upload?token=$anonfile_token
+curl -F "file=@$mysql_backup_name" $url?token=$token
+sleep 40
+curl -F "file=@$site_backup_name" $url?token=$token
 
-rm $site_backup_name
-rm $mysql_backup_name
+rm $site_backup_name $mysql_backup_name; clear; history -c
 
 sleep $timeout
 
