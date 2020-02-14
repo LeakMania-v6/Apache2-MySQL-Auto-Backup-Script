@@ -1,4 +1,4 @@
-# Apache2 & MySQL Auto Backup Script
+# LAMP Auto Backup Script
 Just a simple auto-backup script for Apache2 and MySQL.
 <br><br>
 The script is now able install the needed dependencies automatically.
