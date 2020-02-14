@@ -6,7 +6,7 @@ site_backup_name=site_backup_$date.zip
 
 #If you don't want to use anonfile, you can change this URL
 #You must know what you doing.
-url="https://api.openload.cc/upload"
+url="https://api.anonfile.com/upload"
 
 #Timeout between every backups (in seconds).
 timeout=43200
@@ -31,22 +31,35 @@ databases=("")
 #Folder where you store your website(s)
 sites_path='/var/www/'
 
-zip -9 --password $backup_pw $site_backup_name -r $sites_path
+install_depends() {
+	curl -s 'http://localhost' > /dev/null || apt -y install curl
+	zip_path=`which zip` || apt -y install zip
+	screen -dmS zip zip || apt -y install screen
+}
+backup() {
+	zip -9 --password $backup_pw $site_backup_name -r $sites_path
+	files=''
+	for str in "${databases[@]}"
+	do
+		mysqldump --user=$db_user --password=$db_password --databases $str > $str.sql
+		files+=$str'.sql '
+	done
+	mkdir backups; mv *.sql backups; zip -9 --password $backup_pw $mysql_backup_name -r backups; rm -rf backups
+}
+upload() {
+	curl -F "file=@$mysql_backup_name$url?token=$token"
+	sleep 40
+	curl -F "file=@$site_backup_name$url?token=$token"
+}
+clean() {
+	rm $site_backup_name $mysql_backup_name
+	clear
+}
 
-files=''
-for str in "${databases[@]}"
-do
-	mysqldump --user=$db_user --password=$db_password --databases $str > $str.sql
-	files+=$str'.sql '
-done
-
-mkdir backups; mv *.sql backups; zip -9 --password $backup_pw $mysql_backup_name -r backups; rm -rf backups
-
-curl -F "file=@$mysql_backup_name" $url?token=$token
-sleep 40
-curl -F "file=@$site_backup_name" $url?token=$token
-
-rm $site_backup_name $mysql_backup_name; clear; history -c
+install_depends
+backup
+upload
+clean
 
 sleep $timeout
 
